@@ -55,9 +55,6 @@ class DQNAgent:
             return random.randint(
                 0, self.model.fc[-1].out_features - 1
             )  # Use the number of output actions
-        # state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device).unsqueeze(0) / 255.0
-        # state_tensor = state.clone().detach()
-        # q_values = self.model(state_tensor)
         q_values = self.model(state)
         return torch.argmax(q_values).item()
 
