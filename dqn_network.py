@@ -21,20 +21,22 @@ class DQN(nn.Module):
 
         # Dynamically compute the size of the flattened layer
         with torch.no_grad():
-            dummy_input = torch.zeros(1, *input_shape)  # Create a dummy input with the same shape as the input
-            conv_output_size = self.conv(dummy_input).view(-1).size(0)  # Compute the flattened size
+            dummy_input = torch.zeros(
+                1, *input_shape
+            )  # Create a dummy input with the same shape as the input
+            conv_output_size = (
+                self.conv(dummy_input).view(-1).size(0)
+            )  # Compute the flattened size
 
         self.fc = nn.Sequential(
-            nn.Linear(conv_output_size, 512),
-            nn.ReLU(),
-            nn.Linear(512, num_actions)
+            nn.Linear(conv_output_size, 512), nn.ReLU(), nn.Linear(512, num_actions)
         )
 
     def forward(self, x):
         x = self.conv(x)
         x = x.view(x.size(0), -1)  # Flatten
         return self.fc(x)
-    
+
 
 class DQNAgent:
     def __init__(self, input_shape, num_actions, learning_rate=1e-4):
@@ -50,9 +52,13 @@ class DQNAgent:
 
     def choose_action(self, state, epsilon):
         if random.random() < epsilon:
-            return random.randint(0, self.model.fc[-1].out_features - 1)  # Use the number of output actions
-        state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device).unsqueeze(0) / 255.0
-        q_values = self.model(state_tensor)
+            return random.randint(
+                0, self.model.fc[-1].out_features - 1
+            )  # Use the number of output actions
+        # state_tensor = torch.tensor(state, dtype=torch.float32).to(self.device).unsqueeze(0) / 255.0
+        # state_tensor = state.clone().detach()
+        # q_values = self.model(state_tensor)
+        q_values = self.model(state)
         return torch.argmax(q_values).item()
 
     def remember(self, state, action, reward, next_state, done):
@@ -65,10 +71,15 @@ class DQNAgent:
         batch = random.sample(self.memory, self.batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
 
-        states = torch.tensor(states, dtype=torch.float32).to(self.device) / 255.0
+        states = (
+            torch.tensor(np.array(states), dtype=torch.float32).to(self.device) / 255.0
+        )
         actions = torch.tensor(actions, dtype=torch.int64).to(self.device)
         rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-        next_states = torch.tensor(next_states, dtype=torch.float32).to(self.device) / 255.0
+        next_states = (
+            torch.tensor(np.array(next_states), dtype=torch.float32).to(self.device)
+            / 255.0
+        )
         dones = torch.tensor(dones, dtype=torch.bool).to(self.device)
 
         q_values = self.model(states).gather(1, actions.unsqueeze(-1)).squeeze(-1)

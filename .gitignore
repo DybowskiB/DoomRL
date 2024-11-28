@@ -6,3 +6,5 @@ __pycache__/
 
 # Ignore any .pyo files (optimized Python files)
 *.pyo
+
+*.log
