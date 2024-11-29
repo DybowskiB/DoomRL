@@ -13,7 +13,13 @@ class DoomEnvironment:
         return self._process_state(self.game.get_state())
 
     def step(self, action):
-        reward = self.game.make_action(action, self.frame_skip)
+        shoot = [0, 0, 1]
+        left = [1, 0, 0]
+        right = [0, 1, 0]
+        actions = [shoot, left, right]
+        a = actions[action[0]]
+
+        reward = self.game.make_action(a, self.frame_skip)
         done = self.game.is_episode_finished()
         state = None if done else self._process_state(self.game.get_state())
         return state, reward, done
