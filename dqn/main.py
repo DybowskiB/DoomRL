@@ -1,8 +1,8 @@
 import os
 import torch
-from environment import DoomEnvironment
+from dqn.environment import DoomEnvironment
 from dqn_network import DQNAgent
-from utils import preprocess_frame, stack_frames
+from dqn.utils import preprocess_frame, stack_frames
 
 
 def main():
