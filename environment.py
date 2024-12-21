@@ -2,12 +2,12 @@ from vizdoom import DoomGame
 
 
 class DoomEnvironment:
-    def __init__(self, config_path, frame_skip=4):
+    def __init__(self, config_path, action_map, frame_skip=4):
         self.game = DoomGame()
         self.game.load_config(config_path)
         self.game.init()
         self.frame_skip = frame_skip
-        self.action_map = {0: [0, 0, 1], 1: [1, 0, 0], 2: [0, 1, 0]}
+        self.action_map = action_map
 
     def reset(self):
         self.game.new_episode()

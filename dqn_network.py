@@ -11,16 +11,16 @@ class DQN(nn.Module):
     def __init__(self, input_shape, num_actions):
         super(DQN, self).__init__()
         self.conv = nn.Sequential(
-            # nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4),
-            # nn.ReLU(),
-            # nn.Conv2d(32, 64, kernel_size=4, stride=2),
-            # nn.ReLU(),
-            # nn.Conv2d(64, 64, kernel_size=3, stride=1),
-            # nn.ReLU(),
-            nn.Conv2d(input_shape[0], 16, kernel_size=5, stride=2),
+            nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4),
             nn.ReLU(),
-            nn.Conv2d(16, 32, kernel_size=3, stride=2),
+            nn.Conv2d(32, 64, kernel_size=4, stride=2),
             nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1),
+            nn.ReLU(),
+            # nn.Conv2d(input_shape[0], 16, kernel_size=5, stride=2),
+            # nn.ReLU(),
+            # nn.Conv2d(16, 32, kernel_size=3, stride=2),
+            # nn.ReLU(),
         )
 
         # Dynamically compute the size of the flattened layer:
@@ -30,12 +30,12 @@ class DQN(nn.Module):
             conv_output_size = self.conv(dummy_input).view(-1).size(0)
 
         self.fc = nn.Sequential(
-            # nn.Linear(conv_output_size, 512),
-            # nn.ReLU(),
-            # nn.Linear(512, num_actions),
-            nn.Linear(conv_output_size, 256),
+            nn.Linear(conv_output_size, 512),
             nn.ReLU(),
-            nn.Linear(256, num_actions),
+            nn.Linear(512, num_actions),
+            # nn.Linear(conv_output_size, 256),
+            # nn.ReLU(),
+            # nn.Linear(256, num_actions),
         )
 
         for m in self.modules():
@@ -62,13 +62,11 @@ class DQNAgent:
         self.gamma = 0.99
         self.batch_size = 32
         self.update_target_freq = 1000
-        # self.tau = 0.005
         self.steps = 0
         self.writer = writer
 
     def choose_action(self, state, epsilon):
         if random.random() < epsilon:
-            # Use the number of output actions
             return random.randint(0, self.model.fc[-1].out_features - 1)
 
         self.model.eval()
@@ -117,14 +115,6 @@ class DQNAgent:
         self.steps += 1
         if self.steps % self.update_target_freq == 0:
             self.target_model.load_state_dict(self.model.state_dict())
-
-        # target_model_state_dict = self.target_model.state_dict()
-        # model_state_dict = self.model.state_dict()
-        # for key in model_state_dict:
-        #     target_model_state_dict[key] = model_state_dict[
-        #         key
-        #     ] * self.tau + target_model_state_dict[key] * (1 - self.tau)
-        # self.target_model.load_state_dict(target_model_state_dict)
 
     def save(self, save_path):
         os.makedirs(os.path.dirname(save_path), exist_ok=True)

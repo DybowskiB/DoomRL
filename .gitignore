@@ -9,4 +9,5 @@ __pycache__/
 
 *.log
 
-runs/
+runs/*
+!runs/*_logs/
