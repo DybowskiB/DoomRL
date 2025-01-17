@@ -1,5 +1,7 @@
 import os
 import torch
+from DDQNAgent import DDQNAgent
+from DuelingDQN import DuelingDQN
 from environment import DoomEnvironment
 from dqn_network import DQNAgent
 from utils import preprocess_frame, stack_frames
@@ -8,9 +10,9 @@ from torch.utils.tensorboard import SummaryWriter
 
 def main(model_name, train_mode=True):
     # Paths and configuration
-    config_path = os.path.join("scenarios", "basic.cfg")
+    config_path = os.path.join("scenarios", "defend_the_center.cfg")
     save_path = "models/" + model_name
-    num_episodes = 1000
+    num_episodes = 10000
     epsilon = 1.0 if train_mode else 0.0
     epsilon_decay = 0.997
     min_epsilon = 0.1
@@ -26,8 +28,18 @@ def main(model_name, train_mode=True):
     input_shape = (stack_size, 80, 80)
 
     # Initialize the agent
+    # agent = DQNAgent(
+    #     input_shape, num_actions, writer=writer, learning_rate=learning_rate
+    # )
+    # agent = DDQNAgent(
+    #     input_shape, num_actions, writer=writer, learning_rate=learning_rate
+    # )
     agent = DQNAgent(
-        input_shape, num_actions, writer=writer, learning_rate=learning_rate
+        input_shape,
+        num_actions,
+        writer=writer,
+        learning_rate=learning_rate,
+        model_class=DuelingDQN,
     )
 
     # Load the model if it exists
@@ -108,4 +120,4 @@ def main(model_name, train_mode=True):
 
 
 if __name__ == "__main__":
-    main("dqn_vizdoom.pth", train_mode=True)
+    main("defend_the_center_duelingdqn_agent_2.pth", train_mode=True)

@@ -17,25 +17,16 @@ class DQN(nn.Module):
             nn.ReLU(),
             nn.Conv2d(64, 64, kernel_size=3, stride=1),
             nn.ReLU(),
-            # nn.Conv2d(input_shape[0], 16, kernel_size=5, stride=2),
-            # nn.ReLU(),
-            # nn.Conv2d(16, 32, kernel_size=3, stride=2),
-            # nn.ReLU(),
         )
 
-        # Dynamically compute the size of the flattened layer:
-        # Create a dummy input with the same shape as the input and compute the flattened size
         with torch.no_grad():
             dummy_input = torch.zeros(1, *input_shape)
-            conv_output_size = self.conv(dummy_input).view(-1).size(0)
+            self.conv_output_size = self.conv(dummy_input).view(-1).size(0)
 
         self.fc = nn.Sequential(
-            nn.Linear(conv_output_size, 512),
+            nn.Linear(self.conv_output_size, 512),
             nn.ReLU(),
             nn.Linear(512, num_actions),
-            # nn.Linear(conv_output_size, 256),
-            # nn.ReLU(),
-            # nn.Linear(256, num_actions),
         )
 
         for m in self.modules():
@@ -51,10 +42,12 @@ class DQN(nn.Module):
 
 
 class DQNAgent:
-    def __init__(self, input_shape, num_actions, writer=None, learning_rate=1e-4):
+    def __init__(
+        self, input_shape, num_actions, writer=None, learning_rate=1e-4, model_class=DQN
+    ):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = DQN(input_shape, num_actions).to(self.device)
-        self.target_model = DQN(input_shape, num_actions).to(self.device)
+        self.model = model_class(input_shape, num_actions).to(self.device)
+        self.target_model = model_class(input_shape, num_actions).to(self.device)
         self.target_model.eval()
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
         self.loss_fn = nn.MSELoss()
