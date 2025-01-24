@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from dqn_network import DQN
+from DQNNetwork import DQN
 
 
 # Sieć wykorzystywana w modyfikacji Dueling DQN, dziedzicząca po podstawowym DQN

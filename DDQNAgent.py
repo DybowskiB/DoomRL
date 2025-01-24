@@ -5,7 +5,7 @@ from torch import nn, optim
 import os
 from collections import deque
 
-from dqn_network import DQN, DQNAgent
+from DQNNetwork import DQN, DQNAgent
 
 
 # Klasa reprezentująca agenta stosowanego do Double DQN

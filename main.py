@@ -3,7 +3,7 @@ import torch
 from DDQNAgent import DDQNAgent
 from DuelingDQN import DuelingDQN
 from environment import DoomEnvironment
-from dqn_network import DQNAgent
+from DQNNetwork import DQNAgent
 from utils import preprocess_frame, stack_frames
 from torch.utils.tensorboard import SummaryWriter
 
