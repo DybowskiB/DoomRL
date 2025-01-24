@@ -1,4 +1,5 @@
 from main import main
 
 if __name__ == "__main__":
-    main("dqn_vizdoom.pth", train_mode=False)
+    # Test agenta zapisanego w podanym pliku
+    main("defend_the_center_duelingdqn_agent.pth", train_mode=False)

@@ -1,6 +1,7 @@
 from vizdoom import DoomGame
 
 
+# Reprezentacja środowiska gry i obsługa środowiska dostarczonego przez bibliotekę VizDoom
 class DoomEnvironment:
     def __init__(self, config_path, action_map, frame_skip=4):
         self.game = DoomGame()
